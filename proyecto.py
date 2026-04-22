@@ -1,6 +1,10 @@
 from groq import Groq
+from dotenv import load_dotenv
+import os
 
-cliente = Groq(api_key="TU_API_KEY_AQUI")
+load_dotenv()
+
+cliente = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 def analizar_texto(texto):
     respuesta = cliente.chat.completions.create(
