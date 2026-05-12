@@ -2,6 +2,8 @@ import streamlit as st
 from database import crear_tabla, agregar_tarea, obtener_tareas, completar_tarea, eliminar_tarea
 from ia import analizar_tarea, sugerir_orden
 from datetime import date
+import plotly.graph_objects as go
+from database import obtener_estadisticas
 
 # Inicializar base de datos
 crear_tabla()
@@ -68,3 +70,24 @@ else:
                 if st.button("🗑️ Eliminar", key=f"eliminar_{id}"):
                     eliminar_tarea(id)
                     st.rerun()
+# Estadísticas
+st.markdown("---")
+st.subheader("📊 Estadísticas")
+
+stats = obtener_estadisticas()
+
+col1, col2, col3 = st.columns(3)
+col1.metric("Total tareas", stats["total"])
+col2.metric("Completadas", stats["completadas"])
+col3.metric("Pendientes", stats["pendientes"])
+
+# Gráfica de prioridades
+fig = go.Figure(data=[
+    go.Bar(
+        x=["Alta", "Media", "Baja"],
+        y=[stats["alta"], stats["media"], stats["baja"]],
+        marker_color=["red", "orange", "green"]
+    )
+])
+fig.update_layout(title="Tareas por prioridad", xaxis_title="Prioridad", yaxis_title="Cantidad")
+st.plotly_chart(fig)

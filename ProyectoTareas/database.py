@@ -47,3 +47,27 @@ def eliminar_tarea(id):
     conn.execute("DELETE FROM tareas WHERE id = ?", (id,))
     conn.commit()
     conn.close()
+
+def obtener_estadisticas():
+    conn = conectar()
+    
+    # Total de tareas
+    total = conn.execute("SELECT COUNT(*) FROM tareas").fetchone()[0]
+    completadas = conn.execute("SELECT COUNT(*) FROM tareas WHERE completada = 1").fetchone()[0]
+    pendientes = conn.execute("SELECT COUNT(*) FROM tareas WHERE completada = 0").fetchone()[0]
+    
+    # Por prioridad
+    alta = conn.execute("SELECT COUNT(*) FROM tareas WHERE prioridad = 'Alta'").fetchone()[0]
+    media = conn.execute("SELECT COUNT(*) FROM tareas WHERE prioridad = 'Media'").fetchone()[0]
+    baja = conn.execute("SELECT COUNT(*) FROM tareas WHERE prioridad = 'Baja'").fetchone()[0]
+    
+    conn.close()
+    
+    return {
+        "total": total,
+        "completadas": completadas,
+        "pendientes": pendientes,
+        "alta": alta,
+        "media": media,
+        "baja": baja
+    }
