@@ -71,3 +71,25 @@ def obtener_estadisticas():
         "media": media,
         "baja": baja
     }
+def editar_tarea(id, titulo, descripcion, fecha):
+    conn = conectar()
+    conn.execute("""
+        UPDATE tareas 
+        SET titulo = ?, descripcion = ?, fecha = ?
+        WHERE id = ?
+    """, (titulo, descripcion, fecha, id))
+    conn.commit()
+    conn.close()
+
+def obtener_tareas_por_dia():
+    conn = conectar()
+    cursor = conn.execute("""
+        SELECT fecha, COUNT(*) 
+        FROM tareas 
+        WHERE completada = 1 
+        GROUP BY fecha 
+        ORDER BY fecha
+    """)
+    datos = cursor.fetchall()
+    conn.close()
+    return datos

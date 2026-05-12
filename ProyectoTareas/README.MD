@@ -22,4 +22,4 @@ App web para gestionar tareas con inteligencia artificial. La IA analiza cada ta
 4. Ejecuta: `python -m streamlit run app.py`
 
 ## Autor
-Masalpa — desarrollador de IA
+Masalpa — desarrollador de IAgit add .
