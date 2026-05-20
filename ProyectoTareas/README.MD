@@ -1,3 +1,6 @@
+## 🌐 App en vivo
+[Ver la app aquí](https://gestor-tareas-cydm3wgmbnahmlkejjtu8d.streamlit.app)
+
 # Gestor de Tareas con IA
 
 App web para gestionar tareas con inteligencia artificial. La IA analiza cada tarea, le asigna prioridad, estima el tiempo y sugiere el orden óptimo para completarlas.
