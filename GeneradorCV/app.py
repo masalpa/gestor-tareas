@@ -78,23 +78,30 @@ if st.button("📥 Descargar CV en PDF"):
         pdf.add_page()
         pdf.set_margins(20, 20, 20)
         pdf.set_auto_page_break(auto=True, margin=15)
-        pdf.set_font("Helvetica", size=11)
-        
+
+        # Cabecera con nombre
+        pdf.set_fill_color(30, 30, 30)
+        pdf.set_text_color(255, 255, 255)
+        pdf.set_font("Helvetica", style="B", size=20)
+        pdf.cell(0, 15, nombre.encode('latin-1', 'replace').decode('latin-1'), ln=True, fill=True, align="C")
+        pdf.set_text_color(0, 0, 0)
+        pdf.ln(4)
+
         import textwrap
         for linea in st.session_state.cv.split("\n"):
             if linea.strip() == "":
-                pdf.ln(4)
-            elif linea.strip().isupper() or linea.strip().endswith(":"):
+                pdf.ln(3)
+            elif linea.strip().endswith(":") or linea.strip().isupper():
+                pdf.set_fill_color(220, 220, 220)
                 pdf.set_font("Helvetica", style="B", size=12)
-                for trozo in textwrap.wrap(linea, width=85):
-                    texto = trozo.encode('latin-1', 'replace').decode('latin-1')
-                    pdf.cell(0, 7, texto, ln=True)
+                texto = linea.encode('latin-1', 'replace').decode('latin-1')
+                pdf.cell(0, 8, texto, ln=True, fill=True)
                 pdf.set_font("Helvetica", size=11)
             else:
                 for trozo in textwrap.wrap(linea, width=90):
                     texto = trozo.encode('latin-1', 'replace').decode('latin-1')
                     pdf.cell(0, 6, texto, ln=True)
-        
+
         pdf_bytes = pdf.output()
         st.download_button(
             label="⬇️ Haz clic aquí para descargar",
