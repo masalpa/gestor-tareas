@@ -12,7 +12,7 @@ import os
 load_dotenv()
 
 st.title("📚 Chatbot de Documentos con IA")
-st.write("Sube un PDF y pregúntame lo que quieras sobre él")
+st.write("Sube uno o varios PDFs y pregúntame lo que quieras sobre ellos")
 
 if "listo" not in st.session_state:
     st.session_state.listo = False
@@ -20,23 +20,24 @@ if "listo" not in st.session_state:
 if "historial" not in st.session_state:
     st.session_state.historial = []
 
-pdf = st.file_uploader("Sube tu documento PDF:", type=["pdf"])
+pdfs = st.file_uploader("Sube tus documentos PDF:", type=["pdf"], accept_multiple_files=True)
 
-if pdf and not st.session_state.listo:
-    with st.spinner("Procesando documento..."):
+if pdfs and not st.session_state.listo:
+    with st.spinner("Procesando documentos..."):
         texto = ""
-        with pdfplumber.open(pdf) as doc:
-            for pagina in doc.pages:
-                texto += pagina.extract_text() or ""
+        for pdf in pdfs:
+            with pdfplumber.open(pdf) as doc:
+                for pagina in doc.pages:
+                    texto += pagina.extract_text() or ""
 
         splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
         trozos = splitter.create_documents([texto])
 
         embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-        db = Chroma.from_documents(trozos, embeddings, persist_directory="chroma_db")
+        db = Chroma.from_documents(trozos, embeddings)
         st.session_state.db = db
         st.session_state.listo = True
-        st.success("✅ Documento procesado, ahora puedes hacer preguntas")
+        st.success(f"✅ {len(pdfs)} documento(s) procesado(s), ahora puedes hacer preguntas")
 
 if st.session_state.listo:
     for mensaje in st.session_state.historial:
@@ -45,7 +46,7 @@ if st.session_state.listo:
         else:
             st.chat_message("assistant").write(mensaje["content"])
 
-    pregunta = st.chat_input("Pregunta algo sobre el documento...")
+    pregunta = st.chat_input("Pregunta algo sobre los documentos...")
 
     if pregunta:
         st.chat_message("user").write(pregunta)
